@@ -185,7 +185,7 @@ namespace CollectPicture
 
             foreach (MyPictureBox pBox in picturesBox)
             {
-                if (!pBox.Equals(currentBox) &&
+                if (pBox != currentBox &&
                     x > pBox.Location.X &&
                     x < pBox.Location.X + pBox.Width &&
                     y > pBox.Location.Y &&
