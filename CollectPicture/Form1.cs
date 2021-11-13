@@ -208,6 +208,8 @@ namespace CollectPicture
                             Application.Exit();
                         }
                     }
+
+                    break;
                 }
             }
 
