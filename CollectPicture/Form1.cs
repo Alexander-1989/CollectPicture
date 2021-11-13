@@ -183,6 +183,7 @@ namespace CollectPicture
             int y = MousePosition.Y - Top - 32;
             MyPictureBox currentBox = sender as MyPictureBox;
 
+
             foreach (MyPictureBox pBox in picturesBox)
             {
                 if (pBox != currentBox &&
@@ -191,9 +192,9 @@ namespace CollectPicture
                     y > pBox.Location.Y &&
                     y < pBox.Location.Y + pBox.Height)
                 {
-                    currentBox.MoveTo(pBox.Location);
+                    Point pBoxLocation = pBox.Location;
                     pBox.MoveTo(old_picture_pos);
-                    PlaySound();
+                    old_picture_pos = pBoxLocation;
 
                     if (CheckPicturesPosition())
                     {
@@ -207,7 +208,6 @@ namespace CollectPicture
                             Application.Exit();
                         }
                     }
-                    return;
                 }
             }
 
