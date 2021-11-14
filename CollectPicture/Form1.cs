@@ -142,7 +142,10 @@ namespace CollectPicture
         {
             foreach (MyPictureBox pBox in picturesBox)
             {
-                if (!pBox.IsDefaultPosition()) return false;
+                if (!pBox.IsDefaultPosition())
+                {
+                    return false;
+                }
             }
             return true;
         }
@@ -191,29 +194,29 @@ namespace CollectPicture
                     y > pBox.Location.Y &&
                     y < pBox.Location.Y + pBox.Height)
                 {
+
                     Point pBoxLocation = pBox.Location;
                     pBox.MoveTo(old_picture_pos);
                     old_picture_pos = pBoxLocation;
-
-                    if (CheckPicturesPosition())
-                    {
-                        if (MessageBox.Show("Вы хотите сыграть еще раз?", "Внимание",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            SelectPicture(imgs);
-                        }
-                        else
-                        {
-                            Application.Exit();
-                        }
-                    }
-
                     break;
                 }
             }
 
             currentBox.MoveTo(old_picture_pos);
             PlaySound();
+
+            if (CheckPicturesPosition())
+            {
+                if (MessageBox.Show("Вы хотите сыграть еще раз?", "Внимание",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    SelectPicture(imgs);
+                }
+                else
+                {
+                    Application.Exit();
+                }
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

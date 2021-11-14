@@ -7,9 +7,7 @@ namespace CollectPicture
     {
         private readonly Point _startPosition;
 
-        public MyPictureBox() : this(0, 0)
-        {
-        }
+        public MyPictureBox() : this(0, 0) { }
 
         public MyPictureBox(int x, int y)
         {
@@ -42,7 +40,7 @@ namespace CollectPicture
 
         public bool IsDefaultPosition()
         {
-            return Location.X == _startPosition.X && Location.Y == _startPosition.Y;
+            return Location == _startPosition;
         }
 
         public void MoveTo(int x, int y)
