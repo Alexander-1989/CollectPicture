@@ -194,7 +194,6 @@ namespace CollectPicture
                     y > pBox.Location.Y &&
                     y < pBox.Location.Y + pBox.Height)
                 {
-
                     Point pBoxLocation = pBox.Location;
                     pBox.MoveTo(old_picture_pos);
                     old_picture_pos = pBoxLocation;
