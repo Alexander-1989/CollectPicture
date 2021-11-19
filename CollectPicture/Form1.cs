@@ -10,6 +10,7 @@ namespace CollectPicture
     public partial class Form1 : Form
     {
         string[] imgs = null;
+        bool LMouse = false, RMouse = false;
         Size size = new Size(100, 100);
         Random rnd = new Random();
         Config cfg = new Config();
@@ -162,10 +163,16 @@ namespace CollectPicture
         {
             if (e.Button == MouseButtons.Left)
             {
+                LMouse = true;
                 MyPictureBox pBox = sender as MyPictureBox;
                 pBox.BringToFront(); // mpb.SendToBack();
                 old_picture_pos = pBox.Location;
                 old_mouse_pos = e.Location;
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                RMouse = true;
             }
         }
 
@@ -182,6 +189,13 @@ namespace CollectPicture
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
+            if (!LMouse && RMouse)
+            {
+                RMouse = false;
+                return;
+            }
+
+            LMouse = RMouse = false;
             int x = MousePosition.X - Left - 8;
             int y = MousePosition.Y - Top - 32;
             MyPictureBox currentBox = sender as MyPictureBox;
