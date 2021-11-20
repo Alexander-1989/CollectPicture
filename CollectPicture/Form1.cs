@@ -10,13 +10,13 @@ namespace CollectPicture
     public partial class Form1 : Form
     {
         string[] imgs = null;
-        bool LMouse = false, RMouse = false;
         Size size = new Size(100, 100);
         Random rnd = new Random();
         Config cfg = new Config();
         SoundPlayer sPlayer = new SoundPlayer();
         Point old_picture_pos, old_mouse_pos;
         MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
+        MouseButtonsState mbState = new MouseButtonsState();
 
         public Form1()
         {
@@ -163,16 +163,16 @@ namespace CollectPicture
         {
             if (e.Button == MouseButtons.Left)
             {
-                LMouse = true;
                 MyPictureBox pBox = sender as MyPictureBox;
                 pBox.BringToFront(); // mpb.SendToBack();
                 old_picture_pos = pBox.Location;
                 old_mouse_pos = e.Location;
+                mbState.LBtnClicked = true;
             }
 
             if (e.Button == MouseButtons.Right)
             {
-                RMouse = true;
+                mbState.RBtnClicked = true;
             }
         }
 
@@ -189,13 +189,12 @@ namespace CollectPicture
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!LMouse && RMouse)
+            if (!mbState.LBtnClicked && mbState.RBtnClicked)
             {
-                RMouse = false;
+                mbState.Reset();
                 return;
             }
 
-            LMouse = RMouse = false;
             int x = MousePosition.X - Left - 8;
             int y = MousePosition.Y - Top - 32;
             MyPictureBox currentBox = sender as MyPictureBox;
@@ -216,6 +215,7 @@ namespace CollectPicture
             }
 
             currentBox.MoveTo(old_picture_pos);
+            mbState.Reset();
             PlaySound();
 
             if (CheckPicturesPosition())
