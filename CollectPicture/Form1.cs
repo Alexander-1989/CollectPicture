@@ -210,6 +210,7 @@ namespace CollectPicture
                         break;
                     }
                 }
+
                 currentBox.MoveTo(old_picture_pos);
                 PlaySound();
             }
