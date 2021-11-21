@@ -9,6 +9,7 @@ namespace CollectPicture
 {
     public partial class Form1 : Form
     {
+        enum MouseButtonsState : byte { None, LeftClicked, RightClicked, LeftAndRightClicked }
         string[] imgs = null;
         Size size = new Size(100, 100);
         Random rnd = new Random();
@@ -16,7 +17,7 @@ namespace CollectPicture
         SoundPlayer sPlayer = new SoundPlayer();
         Point old_picture_pos, old_mouse_pos;
         MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
-        MouseButtonsState mbState = new MouseButtonsState();
+        MouseButtonsState mbState;
 
         public Form1()
         {
@@ -167,12 +168,12 @@ namespace CollectPicture
                 pBox.BringToFront(); // mpb.SendToBack();
                 old_picture_pos = pBox.Location;
                 old_mouse_pos = e.Location;
-                mbState.LBtnClicked = true;
+                mbState |= MouseButtonsState.LeftClicked;
             }
 
             if (e.Button == MouseButtons.Right)
             {
-                mbState.RBtnClicked = true;
+                mbState |= MouseButtonsState.RightClicked;
             }
         }
 
@@ -189,34 +190,31 @@ namespace CollectPicture
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (!mbState.LBtnClicked && mbState.RBtnClicked)
+            if (mbState != MouseButtonsState.RightClicked)
             {
-                mbState.Reset();
-                return;
-            }
+                int x = MousePosition.X - Left - 8;
+                int y = MousePosition.Y - Top - 32;
+                MyPictureBox currentBox = sender as MyPictureBox;
 
-            int x = MousePosition.X - Left - 8;
-            int y = MousePosition.Y - Top - 32;
-            MyPictureBox currentBox = sender as MyPictureBox;
-
-            foreach (MyPictureBox pBox in picturesBox)
-            {
-                if (pBox != currentBox &&
-                    x > pBox.Location.X &&
-                    x < pBox.Location.X + pBox.Width &&
-                    y > pBox.Location.Y &&
-                    y < pBox.Location.Y + pBox.Height)
+                foreach (MyPictureBox pBox in picturesBox)
                 {
-                    Point pBoxLocation = pBox.Location;
-                    pBox.MoveTo(old_picture_pos);
-                    old_picture_pos = pBoxLocation;
-                    break;
+                    if (pBox != currentBox &&
+                        x > pBox.Location.X &&
+                        x < pBox.Location.X + pBox.Width &&
+                        y > pBox.Location.Y &&
+                        y < pBox.Location.Y + pBox.Height)
+                    {
+                        Point pBoxLocation = pBox.Location;
+                        pBox.MoveTo(old_picture_pos);
+                        old_picture_pos = pBoxLocation;
+                        break;
+                    }
                 }
+                currentBox.MoveTo(old_picture_pos);
+                PlaySound();
             }
 
-            currentBox.MoveTo(old_picture_pos);
-            mbState.Reset();
-            PlaySound();
+            mbState = MouseButtonsState.None;
 
             if (CheckPicturesPosition())
             {
