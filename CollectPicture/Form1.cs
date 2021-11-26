@@ -94,7 +94,7 @@ namespace CollectPicture
 
         private void SelectPicture(string[] images)
         {
-            if (images == null || images.Length == 0) return;
+            if (images.IsNullOrEmpty()) return;
             string pictureName = images.Choise();
             LoadPicture(pictureName);
         }
