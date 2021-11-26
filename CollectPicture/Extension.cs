@@ -7,9 +7,14 @@ namespace CollectPicture
         private static int lastIndex = -1;
         private static Random rnd = new Random();
 
+        public static bool IsNullOrEmpty<T>(this T[] array)
+        {
+            return array == null || array.Length == 0;
+        }
+
         public static T Choise<T>(this T[] array)
         {
-            if (array == null || array.Length == 0)
+            if (array.IsNullOrEmpty())
             {
                 throw new ArgumentNullException("Array is NULL or Empty");
             }
@@ -27,11 +32,6 @@ namespace CollectPicture
 
             lastIndex = currentIndex;
             return array[currentIndex];
-        }
-
-        public static bool IsNullOrEmpty<T>(this T[] array)
-        {
-            return array == null || array.Length == 0;
         }
     }
 }
