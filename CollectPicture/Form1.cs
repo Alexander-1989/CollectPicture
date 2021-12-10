@@ -9,7 +9,15 @@ namespace CollectPicture
 {
     public partial class Form1 : Form
     {
-        enum MouseButtonsState : byte { None, LeftClicked, RightClicked, LeftAndRightClicked }
+        enum MouseButtonsState : byte
+        {
+            None,
+            LeftClicked,
+            RightClicked,
+            LeftAndRightClicked
+        }
+
+        MouseButtonsState mbState;
         string[] imgs = null;
         Size size = new Size(100, 100);
         Random rnd = new Random();
@@ -17,28 +25,28 @@ namespace CollectPicture
         SoundPlayer sPlayer = new SoundPlayer();
         Point old_picture_pos, old_mouse_pos;
         MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
-        MouseButtonsState mbState;
 
         public Form1()
         {
             InitializeComponent();
-            FormClosed += Form1_FormClosed;
             button1.KeyDown += Button1_KeyDown;
-            Init();
+            FormClosed += (s, e) => SaveConfiguration();
+            Load += (s, e) => Initialization();
         }
 
-        private void Button1_KeyDown(object sender, KeyEventArgs e)
+        private void PlaySound()
         {
-            if (e.Alt && e.Control && e.KeyValue == 'O')
+            if (sPlayer.IsLoadCompleted)
             {
-                System.Diagnostics.Process.Start("https://avatars.alphacoders.com/by_resolution/600");
+                sPlayer.Play();
             }
         }
 
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        private void Initialization()
         {
-            cfg.fields.Location = Location;
-            cfg.Save();
+            LoadConfiguration();
+            CreateGrid();
+            SelectPicture(imgs);
         }
 
         private string[] GetPictures(string path, params string[] pattern)
@@ -49,14 +57,22 @@ namespace CollectPicture
                     select f).ToArray();
         }
 
+        private void SaveConfiguration()
+        {
+            cfg.fields.Location = Location;
+            cfg.Save();
+        }
+
         private void LoadConfiguration()
         {
             try
             {
                 cfg.Open();
                 Location = cfg.fields.Location;
+
                 imgs = GetPictures(cfg.fields.PicturesFolder, cfg.fields.Extensions);
                 string soundFile = Path.Combine(cfg.fields.SoundsFolder, "Click.wav");
+
                 if (File.Exists(soundFile))
                 {
                     sPlayer.SoundLocation = soundFile;
@@ -67,13 +83,6 @@ namespace CollectPicture
             {
                 MessageBox.Show(exc.Message);
             }
-        }
-
-        private void Init()
-        {
-            LoadConfiguration();
-            CreateGrid();
-            SelectPicture(imgs);
         }
 
         private void CreateGrid()
@@ -152,20 +161,12 @@ namespace CollectPicture
             return true;
         }
 
-        private void PlaySound()
-        {
-            if (sPlayer.IsLoadCompleted)
-            {
-                sPlayer.Play();
-            }
-        }
-
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
                 MyPictureBox pBox = sender as MyPictureBox;
-                pBox.BringToFront(); // mpb.SendToBack();
+                pBox.BringToFront(); // pBox.SendToBack();
                 old_picture_pos = pBox.Location;
                 old_mouse_pos = e.Location;
                 mbState |= MouseButtonsState.LeftClicked;
@@ -247,6 +248,14 @@ namespace CollectPicture
         {
             Reset();
             PlaySound();
+        }
+
+        private void Button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Alt && e.Control && e.KeyValue == 'O')
+            {
+                System.Diagnostics.Process.Start("https://avatars.alphacoders.com/by_resolution/600");
+            }
         }
     }
 }

@@ -89,7 +89,6 @@
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
 
         #endregion

@@ -43,6 +43,11 @@ namespace CollectPicture
             return Location == _startPosition;
         }
 
+        public void MoveTo(Point position)
+        {
+            MoveTo(position.X, position.Y);
+        }
+
         public void MoveTo(int x, int y)
         {
             int currentX = Location.X;
@@ -56,11 +61,6 @@ namespace CollectPicture
                 if (currentY > y) currentY--;
                 Location = new Point(currentX, currentY);
             }
-        }
-
-        public void MoveTo(Point position)
-        {
-            MoveTo(position.X, position.Y);
         }
     }
 }
