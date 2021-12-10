@@ -42,6 +42,6 @@ namespace CollectPicture
         public Point Location { get; set; } = new Point(0, 0);
         public string PicturesFolder { get; set; } = ".\\Pictures";
         public string SoundsFolder { get; set; } = ".\\Sounds";
-        public string[] Extensions { get; set; } = new string[] { ".jpg", ".jpeg", ".bmp", ".png" };
+        public string[] Extensions = new string[] { ".jpg", ".jpeg", ".bmp", ".png" };
     }
 }
