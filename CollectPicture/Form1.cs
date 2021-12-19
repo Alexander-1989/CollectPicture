@@ -106,6 +106,7 @@ namespace CollectPicture
             if (images.IsNullOrEmpty()) return;
             string pictureName = images.Choise();
             LoadPicture(pictureName);
+            PlaySound();
         }
 
         private void LoadPicture(string fileName)
@@ -235,7 +236,6 @@ namespace CollectPicture
         private void button1_Click(object sender, EventArgs e)
         {
             SelectPicture(imgs);
-            PlaySound();
         }
 
         private void button2_Click(object sender, EventArgs e)

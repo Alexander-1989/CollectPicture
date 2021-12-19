@@ -56,9 +56,9 @@ namespace CollectPicture
             while (currentX != x || currentY != y)
             {
                 if (currentX < x) currentX++;
-                if (currentX > x) currentX--;
+                else if (currentX > x) currentX--;
                 if (currentY < y) currentY++;
-                if (currentY > y) currentY--;
+                else if (currentY > y) currentY--;
                 Location = new Point(currentX, currentY);
             }
         }
