@@ -8,7 +8,7 @@ namespace CollectPicture
     class Config
     {
         private readonly string path = Path.Combine(Environment.CurrentDirectory, "Config.xml");
-        private XmlSerializer serrializer = new XmlSerializer(typeof(Fields));
+        private readonly XmlSerializer serrializer = new XmlSerializer(typeof(Fields));
         public Fields fields = null;
 
         public void Open()

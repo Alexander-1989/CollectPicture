@@ -113,9 +113,9 @@ namespace CollectPicture
         {
             using (Bitmap picture = new Bitmap(fileName))
             {
-                for (int i = 0; i < picturesBox.GetLength(0); ++i)
+                for (int i = 0; i < picturesBox.GetLength(0); i++)
                 {
-                    for (int j = 0; j < picturesBox.GetLength(1); ++j)
+                    for (int j = 0; j < picturesBox.GetLength(1); j++)
                     {
                         picturesBox[i, j].Enabled = false;
                         picturesBox[i, j].ResetLocation();
@@ -160,6 +160,19 @@ namespace CollectPicture
                 }
             }
             return true;
+        }
+
+        private void RepeatGame()
+        {
+            if (MessageBox.Show("Вы хотите сыграть еще раз?", "Внимание",
+                MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                SelectPicture(imgs);
+            }
+            else
+            {
+                Application.Exit();
+            }
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -218,18 +231,9 @@ namespace CollectPicture
             }
 
             mbState = MouseButtonsState.None;
-
             if (CheckPicturesPosition())
             {
-                if (MessageBox.Show("Вы хотите сыграть еще раз?", "Внимание",
-                    MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    SelectPicture(imgs);
-                }
-                else
-                {
-                    Application.Exit();
-                }
+                RepeatGame();
             }
         }
 
