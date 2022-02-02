@@ -28,10 +28,12 @@ namespace CollectPicture
 
         public void Save()
         {
-            if (fields == null) return;
-            using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+            if (fields != null)
             {
-                serrializer.Serialize(fs, fields);
+                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    serrializer.Serialize(fs, fields);
+                }
             }
         }
     }
