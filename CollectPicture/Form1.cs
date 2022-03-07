@@ -87,9 +87,9 @@ namespace CollectPicture
 
         private void CreateGrid()
         {
-            for (int i = 0; i < picturesBox.GetLength(0); ++i)
+            for (int i = 0; i < picturesBox.GetLength(0); i++)
             {
-                for (int j = 0; j < picturesBox.GetLength(1); ++j)
+                for (int j = 0; j < picturesBox.GetLength(1); j++)
                 {
                     picturesBox[i, j] = new MyPictureBox(new Point(j * 100, i * 100),
                         size, BorderStyle.FixedSingle);
