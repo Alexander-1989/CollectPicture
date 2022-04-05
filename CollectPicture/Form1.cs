@@ -17,14 +17,14 @@ namespace CollectPicture
             LeftAndRightClicked
         }
 
-        MouseButtonsState mbState;
-        string[] imgs = null;
-        Size size = new Size(100, 100);
-        Random rnd = new Random();
-        Config cfg = new Config();
-        SoundPlayer sPlayer = new SoundPlayer();
-        Point old_picture_pos, old_mouse_pos;
-        MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
+        private MouseButtonsState mbState;
+        private string[] imgs = null;
+        private Size size = new Size(100, 100);
+        private readonly Random rnd = new Random();
+        private readonly Config cfg = new Config();
+        private readonly SoundPlayer sPlayer = new SoundPlayer();
+        private Point old_picture_pos, old_mouse_pos;
+        private readonly MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
 
         public Form1()
         {
@@ -60,14 +60,14 @@ namespace CollectPicture
         private void SaveConfiguration()
         {
             cfg.fields.Location = Location;
-            cfg.Save();
+            cfg.Write();
         }
 
         private void LoadConfiguration()
         {
             try
             {
-                cfg.Open();
+                cfg.Read();
                 Location = cfg.fields.Location;
 
                 imgs = GetPictures(cfg.fields.PicturesFolder, cfg.fields.Extensions);

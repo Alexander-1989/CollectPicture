@@ -11,7 +11,7 @@ namespace CollectPicture
         private readonly XmlSerializer serrializer = new XmlSerializer(typeof(Fields));
         public Fields fields = null;
 
-        public void Open()
+        public void Read()
         {
             if (File.Exists(path))
             {
@@ -26,7 +26,7 @@ namespace CollectPicture
             }
         }
 
-        public void Save()
+        public void Write()
         {
             if (fields != null)
             {
