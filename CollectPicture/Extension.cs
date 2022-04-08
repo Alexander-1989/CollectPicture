@@ -5,7 +5,7 @@ namespace CollectPicture
     static class Extension
     {
         private static int lastIndex = -1;
-        private static Random rnd = new Random();
+        private static readonly Random random = new Random();
 
         public static bool IsNullOrEmpty<T>(this T[] array)
         {
@@ -14,7 +14,7 @@ namespace CollectPicture
 
         public static T Choise<T>(this T[] array)
         {
-            if (array.IsNullOrEmpty())
+            if (array == null || array.Length == 0)
             {
                 throw new ArgumentNullException("Array is NULL or Empty");
             }
@@ -27,7 +27,7 @@ namespace CollectPicture
             int currentIndex = lastIndex;
             while (currentIndex == lastIndex)
             {
-                currentIndex = rnd.Next(array.Length);
+                currentIndex = random.Next(array.Length);
             }
 
             lastIndex = currentIndex;

@@ -120,8 +120,8 @@ namespace CollectPicture
                         picturesBox[i, j].Enabled = false;
                         picturesBox[i, j].ResetLocation();
                         picturesBox[i, j].Image?.Dispose();
-                        Rectangle rec = new Rectangle(new Point(j * 100, i * 100), size);
-                        picturesBox[i, j].Image = picture.Clone(rec, picture.PixelFormat);
+                        Rectangle rectangle = new Rectangle(new Point(j * 100, i * 100), size);
+                        picturesBox[i, j].Image = picture.Clone(rectangle, picture.PixelFormat);
                     }
                 }
             }
