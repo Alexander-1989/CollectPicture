@@ -5,14 +5,14 @@ namespace CollectPicture
 {
     class MyPictureBox : PictureBox
     {
-        private readonly Point _startPosition;
+        private readonly Point startPosition;
 
         public MyPictureBox() : this(0, 0) { }
 
         public MyPictureBox(int x, int y)
         {
-            _startPosition.X = x;
-            _startPosition.Y = y;
+            startPosition.X = x;
+            startPosition.Y = y;
             Location = new Point(x, y);
         }
 
@@ -38,12 +38,12 @@ namespace CollectPicture
 
         public void ResetLocation()
         {
-            Location = _startPosition;
+            Location = startPosition;
         }
 
         public bool IsDefaultPosition()
         {
-            return Location == _startPosition;
+            return Location == startPosition;
         }
 
         public void MoveTo(Point position)
