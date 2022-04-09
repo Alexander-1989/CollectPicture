@@ -30,6 +30,9 @@ namespace CollectPicture
             BorderStyle = borderStyle;
         }
 
+        public MyPictureBox(int x, int y, Size size, BorderStyle borderStyle) :
+            this(x, y, size.Width, size.Height, borderStyle) { }
+
         public MyPictureBox(Point point, Size size, BorderStyle borderStyle) :
             this(point.X, point.Y, size.Width, size.Height, borderStyle) { }
 

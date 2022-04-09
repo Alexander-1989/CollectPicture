@@ -20,11 +20,11 @@ namespace CollectPicture
         private MouseButtonsState mbState;
         private string[] imgs = null;
         private Size size = new Size(100, 100);
-        private readonly Random rnd = new Random();
-        private readonly Config cfg = new Config();
+        private readonly Random random = new Random();
+        private readonly Config config = new Config();
         private readonly SoundPlayer sPlayer = new SoundPlayer();
-        private Point old_picture_pos, old_mouse_pos;
-        private readonly MyPictureBox[,] picturesBox = new MyPictureBox[6, 6];
+        private Point lastPicturePosition, lastMousePosition;
+        private readonly MyPictureBox[,] picturesBoxes = new MyPictureBox[6, 6];
 
         public Form1()
         {
@@ -59,19 +59,19 @@ namespace CollectPicture
 
         private void SaveConfiguration()
         {
-            cfg.fields.Location = Location;
-            cfg.Write();
+            config.fields.Location = Location;
+            config.Write();
         }
 
         private void LoadConfiguration()
         {
             try
             {
-                cfg.Read();
-                Location = cfg.fields.Location;
+                config.Read();
+                Location = config.fields.Location;
 
-                imgs = GetPictures(cfg.fields.PicturesFolder, cfg.fields.Extensions);
-                string soundFile = Path.Combine(cfg.fields.SoundsFolder, "Click.wav");
+                imgs = GetPictures(config.fields.PicturesFolder, config.fields.Extensions);
+                string soundFile = Path.Combine(config.fields.SoundsFolder, "Click.wav");
 
                 if (File.Exists(soundFile))
                 {
@@ -87,41 +87,42 @@ namespace CollectPicture
 
         private void CreateGrid()
         {
-            for (int i = 0; i < picturesBox.GetLength(0); i++)
+            for (int i = 0; i < picturesBoxes.GetLength(0); i++)
             {
-                for (int j = 0; j < picturesBox.GetLength(1); j++)
+                for (int j = 0; j < picturesBoxes.GetLength(1); j++)
                 {
-                    picturesBox[i, j] = new MyPictureBox(new Point(j * 100, i * 100),
-                        size, BorderStyle.FixedSingle);
-                    picturesBox[i, j].MouseDown += Form1_MouseDown;
-                    picturesBox[i, j].MouseMove += Form1_MouseMove;
-                    picturesBox[i, j].MouseUp += Form1_MouseUp;
-                    Controls.Add(picturesBox[i, j]);
+                    picturesBoxes[i, j] = new MyPictureBox(j * 100, i * 100, size, BorderStyle.FixedSingle);
+                    picturesBoxes[i, j].MouseDown += Form1_MouseDown;
+                    picturesBoxes[i, j].MouseMove += Form1_MouseMove;
+                    picturesBoxes[i, j].MouseUp += Form1_MouseUp;
+                    Controls.Add(picturesBoxes[i, j]);
                 }
             }
         }
 
         private void SelectPicture(string[] images)
         {
-            if (images.IsNullOrEmpty()) return;
-            string pictureName = images.Choise();
-            LoadPicture(pictureName);
-            PlaySound();
+            if (!images.IsNullOrEmpty())
+            {
+                string pictureName = images.Choise();
+                LoadPicture(pictureName);
+                PlaySound();
+            }
         }
 
         private void LoadPicture(string fileName)
         {
             using (Bitmap picture = new Bitmap(fileName))
             {
-                for (int i = 0; i < picturesBox.GetLength(0); i++)
+                for (int i = 0; i < picturesBoxes.GetLength(0); i++)
                 {
-                    for (int j = 0; j < picturesBox.GetLength(1); j++)
+                    for (int j = 0; j < picturesBoxes.GetLength(1); j++)
                     {
-                        picturesBox[i, j].Enabled = false;
-                        picturesBox[i, j].ResetLocation();
-                        picturesBox[i, j].Image?.Dispose();
+                        picturesBoxes[i, j].Enabled = false;
+                        picturesBoxes[i, j].ResetLocation();
+                        picturesBoxes[i, j].Image?.Dispose();
                         Rectangle rectangle = new Rectangle(new Point(j * 100, i * 100), size);
-                        picturesBox[i, j].Image = picture.Clone(rectangle, picture.PixelFormat);
+                        picturesBoxes[i, j].Image = picture.Clone(rectangle, picture.PixelFormat);
                     }
                 }
             }
@@ -129,21 +130,21 @@ namespace CollectPicture
 
         private void Shake()
         {
-            foreach (MyPictureBox pBox in picturesBox)
+            foreach (MyPictureBox pBox in picturesBoxes)
             {
                 pBox.Enabled = true;
-                int i = rnd.Next(picturesBox.GetLength(0));
-                int j = rnd.Next(picturesBox.GetLength(1));
+                int i = random.Next(picturesBoxes.GetLength(0));
+                int j = random.Next(picturesBoxes.GetLength(1));
 
-                Point tempPos = pBox.Location;
-                pBox.Location = picturesBox[i, j].Location;
-                picturesBox[i, j].Location = tempPos;
+                Point lastPosition = pBox.Location;
+                pBox.Location = picturesBoxes[i, j].Location;
+                picturesBoxes[i, j].Location = lastPosition;
             }
         }
 
         private void Reset()
         {
-            foreach (MyPictureBox pBox in picturesBox)
+            foreach (MyPictureBox pBox in picturesBoxes)
             {
                 pBox.Enabled = false;
                 pBox.ResetLocation();
@@ -152,7 +153,7 @@ namespace CollectPicture
 
         private bool CheckPicturesPosition()
         {
-            foreach (MyPictureBox pBox in picturesBox)
+            foreach (MyPictureBox pBox in picturesBoxes)
             {
                 if (!pBox.IsDefaultPosition())
                 {
@@ -181,8 +182,8 @@ namespace CollectPicture
             {
                 MyPictureBox pBox = sender as MyPictureBox;
                 pBox.BringToFront(); // pBox.SendToBack();
-                old_picture_pos = pBox.Location;
-                old_mouse_pos = e.Location;
+                lastPicturePosition = pBox.Location;
+                lastMousePosition = e.Location;
                 mbState |= MouseButtonsState.LeftClicked;
             }
 
@@ -197,8 +198,8 @@ namespace CollectPicture
             if (e.Button == MouseButtons.Left)
             {
                 MyPictureBox pBox = sender as MyPictureBox;
-                int dx = e.Location.X - old_mouse_pos.X;
-                int dy = e.Location.Y - old_mouse_pos.Y;
+                int dx = e.Location.X - lastMousePosition.X;
+                int dy = e.Location.Y - lastMousePosition.Y;
                 pBox.Location = new Point(pBox.Location.X + dx, pBox.Location.Y + dy);
             }
         }
@@ -211,7 +212,7 @@ namespace CollectPicture
                 int y = MousePosition.Y - Top - 32;
                 MyPictureBox currentBox = sender as MyPictureBox;
 
-                foreach (MyPictureBox pBox in picturesBox)
+                foreach (MyPictureBox pBox in picturesBoxes)
                 {
                     if (pBox != currentBox &&
                         x > pBox.Location.X &&
@@ -220,13 +221,13 @@ namespace CollectPicture
                         y < pBox.Location.Y + pBox.Height)
                     {
                         Point pBoxLocation = pBox.Location;
-                        pBox.MoveTo(old_picture_pos);
-                        old_picture_pos = pBoxLocation;
+                        pBox.MoveTo(lastPicturePosition);
+                        lastPicturePosition = pBoxLocation;
                         break;
                     }
                 }
 
-                currentBox.MoveTo(old_picture_pos);
+                currentBox.MoveTo(lastPicturePosition);
                 PlaySound();
             }
 
