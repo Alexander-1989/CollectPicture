@@ -30,8 +30,8 @@ namespace CollectPicture
         {
             InitializeComponent();
             button1.KeyDown += Button1_KeyDown;
-            FormClosed += (s, e) => SaveConfiguration();
             Load += (s, e) => Initialization();
+            FormClosed += (s, e) => SaveConfiguration();
         }
 
         private void PlaySound()
