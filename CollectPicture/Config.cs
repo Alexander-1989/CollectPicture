@@ -7,22 +7,22 @@ namespace CollectPicture
 {
     class Config
     {
-        private readonly string path = Path.Combine(Environment.CurrentDirectory, "Config.xml");
-        private readonly XmlSerializer serrializer = new XmlSerializer(typeof(Fields));
         public Fields fields = null;
+        private readonly XmlSerializer serrializer = new XmlSerializer(typeof(Fields));
+        private readonly string fileName = Path.Combine(Environment.CurrentDirectory, "Config.xml");
 
         public void Read()
         {
-            if (File.Exists(path))
+            if (!File.Exists(fileName))
             {
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-                {
-                    fields = serrializer.Deserialize(fs) as Fields;
-                }
+                fields = new Fields();
             }
             else
             {
-                fields = new Fields();
+                using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    fields = serrializer.Deserialize(fs) as Fields;
+                }
             }
         }
 
@@ -30,7 +30,7 @@ namespace CollectPicture
         {
             if (fields != null)
             {
-                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
                 {
                     serrializer.Serialize(fs, fields);
                 }
@@ -41,9 +41,9 @@ namespace CollectPicture
     [Serializable]
     public class Fields
     {
-        public Point Location { get; set; } = new Point(0, 0);
+        public Point Location { get; set; } = new Point();
         public string PicturesFolder { get; set; } = ".\\Pictures";
-        public string SoundsFolder { get; set; } = ".\\Sounds";
+        public string SoundFile { get; set; } = ".\\Sounds\\Click.wav";
         public string[] Extensions = new string[] { ".jpg", ".jpeg", ".bmp", ".png" };
     }
 }

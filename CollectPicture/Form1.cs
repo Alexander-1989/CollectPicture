@@ -12,26 +12,28 @@ namespace CollectPicture
         enum MouseButtonsState : byte
         {
             None,
-            LeftClicked,
-            RightClicked,
-            LeftAndRightClicked
+            LeftButtonClick,
+            RightButtonClick,
+            BothButtonClick
         }
 
-        private MouseButtonsState mbState;
-        private string[] imgs = null;
+        private Point lastMousePosition;
+        private Point lastPicturePosition;
         private Size size = new Size(100, 100);
+        private MouseButtonsState mouseButtonState;
+        private const int rowsCount = 6;
+        private string[] imgs = null;
         private readonly Random random = new Random();
         private readonly Config config = new Config();
         private readonly SoundPlayer sPlayer = new SoundPlayer();
-        private Point lastPicturePosition, lastMousePosition;
-        private readonly MyPictureBox[,] picturesBoxes = new MyPictureBox[6, 6];
+        private readonly MyPictureBox[,] picturesBoxes = new MyPictureBox[rowsCount, rowsCount];
 
         public Form1()
         {
             InitializeComponent();
             button1.KeyDown += Button1_KeyDown;
             Load += (s, e) => Initialization();
-            FormClosed += (s, e) => SaveConfiguration();
+            FormClosed += (s, e) => SaveConfig();
         }
 
         private void PlaySound()
@@ -44,7 +46,7 @@ namespace CollectPicture
 
         private void Initialization()
         {
-            LoadConfiguration();
+            LoadConfig();
             CreateGrid();
             SelectPicture(imgs);
         }
@@ -57,13 +59,13 @@ namespace CollectPicture
                     select f).ToArray();
         }
 
-        private void SaveConfiguration()
+        private void SaveConfig()
         {
             config.fields.Location = Location;
             config.Write();
         }
 
-        private void LoadConfiguration()
+        private void LoadConfig()
         {
             try
             {
@@ -71,7 +73,7 @@ namespace CollectPicture
                 Location = config.fields.Location;
 
                 imgs = GetPictures(config.fields.PicturesFolder, config.fields.Extensions);
-                string soundFile = Path.Combine(config.fields.SoundsFolder, "Click.wav");
+                string soundFile = config.fields.SoundFile;
 
                 if (File.Exists(soundFile))
                 {
@@ -87,9 +89,9 @@ namespace CollectPicture
 
         private void CreateGrid()
         {
-            for (int i = 0; i < picturesBoxes.GetLength(0); i++)
+            for (int i = 0; i < rowsCount; i++)
             {
-                for (int j = 0; j < picturesBoxes.GetLength(1); j++)
+                for (int j = 0; j < rowsCount; j++)
                 {
                     picturesBoxes[i, j] = new MyPictureBox(j * 100, i * 100, size, BorderStyle.FixedSingle);
                     picturesBoxes[i, j].MouseDown += Form1_MouseDown;
@@ -114,9 +116,9 @@ namespace CollectPicture
         {
             using (Bitmap picture = new Bitmap(fileName))
             {
-                for (int i = 0; i < picturesBoxes.GetLength(0); i++)
+                for (int i = 0; i < rowsCount; i++)
                 {
-                    for (int j = 0; j < picturesBoxes.GetLength(1); j++)
+                    for (int j = 0; j < rowsCount; j++)
                     {
                         picturesBoxes[i, j].Enabled = false;
                         picturesBoxes[i, j].ResetLocation();
@@ -133,8 +135,8 @@ namespace CollectPicture
             foreach (MyPictureBox pBox in picturesBoxes)
             {
                 pBox.Enabled = true;
-                int i = random.Next(picturesBoxes.GetLength(0));
-                int j = random.Next(picturesBoxes.GetLength(1));
+                int i = random.Next(rowsCount);
+                int j = random.Next(rowsCount);
 
                 Point lastPosition = pBox.Location;
                 pBox.Location = picturesBoxes[i, j].Location;
@@ -184,12 +186,12 @@ namespace CollectPicture
                 pBox.BringToFront(); // pBox.SendToBack();
                 lastPicturePosition = pBox.Location;
                 lastMousePosition = e.Location;
-                mbState |= MouseButtonsState.LeftClicked;
+                mouseButtonState |= MouseButtonsState.LeftButtonClick;
             }
 
             if (e.Button == MouseButtons.Right)
             {
-                mbState |= MouseButtonsState.RightClicked;
+                mouseButtonState |= MouseButtonsState.RightButtonClick;
             }
         }
 
@@ -206,7 +208,7 @@ namespace CollectPicture
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (mbState != MouseButtonsState.RightClicked)
+            if (mouseButtonState != MouseButtonsState.RightButtonClick)
             {
                 int x = MousePosition.X - Left - 8;
                 int y = MousePosition.Y - Top - 32;
@@ -231,7 +233,7 @@ namespace CollectPicture
                 PlaySound();
             }
 
-            mbState = MouseButtonsState.None;
+            mouseButtonState = MouseButtonsState.None;
             if (CheckPicturesPosition())
             {
                 RepeatGame();

@@ -16,7 +16,11 @@ namespace CollectPicture
             Location = new Point(x, y);
         }
 
-        public MyPictureBox(Point point) : this(point.X, point.Y) { }
+        public MyPictureBox(Point point)
+        {
+            startPosition = point;
+            Location = point;
+        }
 
         public MyPictureBox(int x, int y, int width, int height) : this(x, y)
         {
